@@ -2,6 +2,7 @@
   "name": "ai-teacher-bot",
   "type": "module",
   "dependencies": {
-    "node-telegram-bot-api": "^0.64.0"
+    "node-telegram-bot-api": "^0.64.0",
+    "node-fetch": "^3.3.2"
   }
 }
