@@ -1,5 +1,7 @@
 import TelegramBot from "node-telegram-bot-api";
+import fetch from "node-fetch";
 
+// 🔐 TOKEN (Render’dan olinadi)
 const TOKEN = process.env.TOKEN;
 
 if (!TOKEN) {
@@ -7,10 +9,11 @@ if (!TOKEN) {
   process.exit(1);
 }
 
+// 🤖 Botni ishga tushiramiz
 const bot = new TelegramBot(TOKEN, { polling: true });
 
 
-// 🔹 START (AI ustoz tanishtirish)
+// 🔹 /start komandasi
 bot.onText(/\/start/, (msg) => {
   bot.sendMessage(
     msg.chat.id,
@@ -55,14 +58,14 @@ bot.on("message", async (msg) => {
     const data = await res.json();
 
     if (!data.reply) {
-      bot.sendMessage(chatId, "Xatolik ❌");
+      bot.sendMessage(chatId, "Serverdan noto‘g‘ri javob ❌");
       return;
     }
 
     bot.sendMessage(chatId, data.reply);
 
   } catch (err) {
-    console.error(err);
+    console.error("ERROR:", err);
     bot.sendMessage(chatId, "Server bilan bog‘lanishda xatolik ❌");
   }
 });
