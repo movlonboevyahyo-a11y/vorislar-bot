@@ -6,24 +6,25 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
-// tekshiruv: API key bor-yo‘qligini
+// API KEY borligini tekshiradi
 if (!process.env.OPENAI_API_KEY) {
-  console.error("❌ API KEY topilmadi! .env faylni tekshir");
+  console.log("❌ API KEY yo‘q! .env qo‘sh");
   process.exit(1);
 }
 
+// Chat endpoint (AI ustoz)
 app.post("/chat", async (req, res) => {
   const { message } = req.body;
 
   if (!message) {
-    return res.status(400).json({ error: "Message yo‘q" });
+    return res.status(400).json({ error: "Message yozilmagan" });
   }
 
   try {
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`, // 🔐 xavfsiz
+        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
@@ -32,7 +33,7 @@ app.post("/chat", async (req, res) => {
           {
             role: "system",
             content: `
-Sen ONA TILI VA ADABIYOT fanidan professional ustozsan.
+Sen ona tili va adabiyot fanidan professional ustozsan.
 
 Qoidalar:
 - Sodda tushuntir
@@ -53,10 +54,9 @@ Faqat javob berma — o‘rgat!
 
     const data = await response.json();
 
-    // agar API xato qaytarsa
     if (data.error) {
-      console.error("OpenAI error:", data.error);
-      return res.status(500).json({ error: "AI xatolik" });
+      console.log(data.error);
+      return res.status(500).json({ error: "OpenAI xatolik" });
     }
 
     res.json({
@@ -64,17 +64,16 @@ Faqat javob berma — o‘rgat!
     });
 
   } catch (err) {
-    console.error("Server error:", err);
+    console.log(err);
     res.status(500).json({ error: "Server xatosi" });
   }
 });
 
-// test uchun oddiy route
+// test route
 app.get("/", (req, res) => {
-  res.send("AI ustoz server ishlayapti 🚀");
+  res.send("AI ustoz ishlayapti 🚀");
 });
 
-const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`✅ Server ishga tushdi: http://localhost:${PORT}`);
+app.listen(3000, () => {
+  console.log("Server: http://localhost:3000");
 });
